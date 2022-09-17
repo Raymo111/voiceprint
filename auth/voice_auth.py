@@ -7,8 +7,25 @@ import python_speech_features as features
 import scipy.io.wavfile as wav
 import sklearn.mixture
 import noisereduce
+from pydub import AudioSegment
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
+
+
+def test_noise_reduction(path, path2):
+    print(path)
+    rate, data = wav.read(path)
+    # convert stereo to mono if applicable
+
+    if len(data.shape) > 1:
+        sound = AudioSegment.from_wav(path)
+        sound = sound.set_channels(1)
+        sound.export(path, format="wav")
+
+    rate, mono_data = wav.read(path)
+
+    reduced_noise_data = noisereduce.reduce_noise(y=mono_data, sr=rate, n_fft=2048)
+    wav.write(path2, rate, reduced_noise_data)
 
 
 def voice_features(rate, data):
@@ -24,8 +41,8 @@ def voice_features(rate, data):
 
     """
     # convert stereo to mono if applicable
-    if data.shape[1] > 1:
-        data = data.astype(float).sum(axis=1) / 2
+    if len(data.shape) > 1:
+        raise ValueError("WAV file is not mono!")
 
     reduced_noise = noisereduce.reduce_noise(y=data, sr=rate, n_fft=2048)
     mfccs = features.mfcc(reduced_noise, rate, nfft=2048)  # using default parameters except fft size
@@ -39,7 +56,7 @@ def build_model(name, paths):
     """ Builds Gaussian Mixture Model from features of each WAV file in paths collection
     Parameters:
     name: str               - name of model (id)
-    paths: list[str]        - list of paths of WAV files
+    paths: list[str]        - list of paths of WAV files. WAV files MUST BE MONO NOT STERO
     """
     dest = '/home/kevincheng/Documents/voiceprint-htn/audio_models/'
     combined_features = np.asarray([])

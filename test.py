@@ -6,25 +6,35 @@ import numpy as np
 from scipy import linalg
 from tqdm import tqdm
 from auth import voice_auth
+from pydub import AudioSegment
 
 THRESHOLD = -15.722
 
 color_iter = itertools.cycle(["navy", "c", "cornflowerblue", "gold", "darkorange"])
 
 def test1():
-    kevin = ['/home/kevincheng/Documents/voiceprint-htn/audio/record1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/record2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/record3.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/record4.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/record5.wav']
+    kevin = ['/home/kevincheng/Documents/voiceprint-htn/audio/kevin1.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin3.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin4.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin5.wav']
     thomas = ['/home/kevincheng/Documents/voiceprint-htn/audio/thomas1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas2.wav',]
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas3.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas4.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas5.wav']
+    raymond = ['/home/kevincheng/Documents/voiceprint-htn/audio/raymond1.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond3.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond4.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond5.wav']
 
     success = voice_auth.build_model("kevin", kevin)
-    success = voice_auth.build_model("thomas", thomas)
+    success += voice_auth.build_model("thomas", thomas)
+    success += voice_auth.build_model("raymond", raymond)
 
     lst = []
-    for path in thomas:
+    for path in kevin:
         model, prob = voice_auth.compare(path, THRESHOLD, '/home/kevincheng/Documents/voiceprint-htn/audio_models/')
         lst.append((model, prob))
 
@@ -128,6 +138,9 @@ def test3():
     print(x_)
     print(y_)
 
+def test_noise_reduction():
+    voice_auth.test_noise_reduction('/home/kevincheng/Documents/voiceprint-htn/test_noise/input.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/test_noise/result.wav')
 
 if __name__ == '__main__':
     test1()
