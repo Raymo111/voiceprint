@@ -1,42 +1,44 @@
-from distutils.log import debug
 import os
 import logging
-import wave
-import time
 import pickle
 import numpy as np
-import librosa
-import librosa.display
 import sklearn
 import python_speech_features as features
 import scipy.io.wavfile as wav
 import sklearn.mixture
+import noisereduce
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
 
 def voice_features(rate, data):
-    """ Extracts MFCC features from the given WAV data
+    """ Extracts MFCC features from the given WAV data, also reduces noise
     Parameters:
     rate: int               - sampling rate of WAV file
     data: numpy array       - data from WAV file
+
+    audiodata[[left right]
+              [left right]
+               ...
+              [left right]]
+
     """
+    # convert stereo to mono if applicable
+    if data.shape[1] > 1:
+        data = data.astype(float).sum(axis=1) / 2
 
-    # mfccs = librosa.feature.mfcc(y=data, sr=rate)
-    # print(mfccs.shape)
-    # print(mfccs)
-    # librosa.display.specshow(mfccs, sr=rate, x_axis='time')
-
-    # mfccs = features.mfcc(data, rate, 0.025, 0.01, 20, nfft=1200, appendEnergy=True)
-    mfccs = features.mfcc(data, rate, nfft=1200)  # using default parameters except fft size
+    reduced_noise = noisereduce.reduce_noise(y=data, sr=rate, n_fft=2048)
+    mfccs = features.mfcc(reduced_noise, rate, nfft=2048)  # using default parameters except fft size
     mfccs = sklearn.preprocessing.scale(mfccs)
     delta_mfccs = features.delta(mfccs, 2)
     return np.hstack((mfccs, delta_mfccs))
 
+
+# TODO: improve the scaling and accuracy of the model -> wordlists? better word distribition? bg noise filtering?
 def build_model(name, paths):
     """ Builds Gaussian Mixture Model from features of each WAV file in paths collection
     Parameters:
-    name: str               - name of collection
+    name: str               - name of model (id)
     paths: list[str]        - list of paths of WAV files
     """
     dest = '/home/kevincheng/Documents/voiceprint-htn/audio_models/'
@@ -49,10 +51,9 @@ def build_model(name, paths):
             combined_features = features
         else:
             combined_features = np.vstack([combined_features, features])
-        logging.debug(f"Combined feature size: {combined_features.size}")
 
     if combined_features.size != 0:
-        logging.debug(f"n components: {len(paths)}")
+        logging.debug(f"# samples: {len(paths)}")
         gmm = sklearn.mixture.GaussianMixture(
             n_components=len(paths), max_iter=200, covariance_type='diag', n_init=3)
         gmm.fit(features)
@@ -63,12 +64,13 @@ def build_model(name, paths):
         return False
 
 
-def compare(path):
-    """ Compares audio features against all GMMs to find closest match
+def compare(path, threshold, models_src):
+    """ Compares audio features against all models to find closest match above given threshold
     Parameters:
     paths: str              - path of WAV file to compare
+    threshold: num          - threshold for match, negative log likelihood
     """
-    models_src = '/home/kevincheng/Documents/voiceprint-htn/audio_models/'
+
     model_paths = [os.path.join(models_src, fname) for fname in
         os.listdir(models_src) if fname.endswith('.gmm')]
 
@@ -93,7 +95,10 @@ def compare(path):
         debug_every_model.append((model_name, ll))
 
     logging.debug(debug_every_model)
-    return best_model, best_probabilty
+    if best_probabilty > threshold:
+        return best_model, best_probabilty
+    else:
+        return None, None
 
 
 
