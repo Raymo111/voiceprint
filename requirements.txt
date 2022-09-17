@@ -13,12 +13,12 @@ kiwisolver==1.4.4
 librosa==0.9.2
 llvmlite==0.39.1
 matplotlib==3.6.0
+noisereduce==2.0.1
 numba==0.56.2
 numpy==1.23.3
 packaging==21.3
 Pillow==9.2.0
 pooch==1.6.0
-PyAudio==0.2.12
 pycparser==2.21
 pyparsing==3.0.9
 python-dateutil==2.8.2
@@ -31,5 +31,5 @@ six==1.16.0
 sklearn==0.0
 SoundFile==0.10.3.post1
 threadpoolctl==3.1.0
+tqdm==4.64.1
 urllib3==1.26.12
-Wave==0.0.2
