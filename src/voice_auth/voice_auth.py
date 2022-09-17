@@ -8,7 +8,7 @@ import scipy.io.wavfile as wav
 import sklearn.mixture
 import noisereduce
 from pydub import AudioSegment
-from src.record.voice_record import record
+import voice_record
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 
@@ -118,7 +118,7 @@ def compare(path, threshold, models_src):
     else:
         return None, None
 
-    def authenticate():
-        record()
-        # compare()
-        return True
+def authenticate():
+    voice_record.record()
+    # compare()
+    return False

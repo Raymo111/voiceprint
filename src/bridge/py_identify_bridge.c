@@ -8,16 +8,20 @@ int do_identify()
 {
 	bool result;
 	Py_Initialize();
+	PyObject *sysPath = PySys_GetObject("path");
+	assert(sysPath != NULL);
+    PyObject *path = PyUnicode_DecodeFSDefault("../voice_auth");
+	assert(path != NULL);
+	PyList_Insert(sysPath, 0, path);
 
 	PyObject *p_name, *p_module, *p_result;
 
-	p_name = PyUnicode_DecodeFSDefault("../auth/voice_auth.py");
+	p_name = PyUnicode_FromString("voice_auth");
 	if (p_name == NULL)
 	{
 		printf("Error: cannot find file 'voice_auth.py'");
 		return ERROR;
 	}
-	printf("File found: %s", p_name);
 
 	p_module = PyImport_Import(p_name);
 	Py_DECREF(p_name);

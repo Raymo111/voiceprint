@@ -5,7 +5,7 @@ import matplotlib as mpl
 import numpy as np
 from scipy import linalg
 from tqdm import tqdm
-from auth import voice_auth
+from voice_auth import voice_auth
 from pydub import AudioSegment
 
 THRESHOLD = -15.722
