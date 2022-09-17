@@ -7,8 +7,9 @@ from scipy import linalg
 from tqdm import tqdm
 from auth import voice_auth
 from pydub import AudioSegment
+from record import voice_record
 
-THRESHOLD = -15.722
+THRESHOLD = -16.2
 
 color_iter = itertools.cycle(["navy", "c", "cornflowerblue", "gold", "darkorange"])
 
@@ -28,13 +29,17 @@ def test1():
         '/home/kevincheng/Documents/voiceprint-htn/audio/raymond3.wav',
         '/home/kevincheng/Documents/voiceprint-htn/audio/raymond4.wav',
         '/home/kevincheng/Documents/voiceprint-htn/audio/raymond5.wav']
+    test = ['/home/kevincheng/Documents/voiceprint-htn/audio/rtest1.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest3.wav'
+    ]
 
-    success = voice_auth.build_model("kevin", kevin)
-    success += voice_auth.build_model("thomas", thomas)
-    success += voice_auth.build_model("raymond", raymond)
+    # success = voice_auth.build_model("kevin", kevin)
+    # success = voice_auth.build_model("thomas", thomas)
+    success = voice_auth.build_model("raymond", raymond)
 
     lst = []
-    for path in kevin:
+    for path in test:
         model, prob = voice_auth.compare(path, THRESHOLD, '/home/kevincheng/Documents/voiceprint-htn/audio_models/')
         lst.append((model, prob))
 
@@ -108,11 +113,11 @@ def plot_results(X, Y_, means, covariances, index, title):
 def test3():
     import scipy.io.wavfile as wav
     import sklearn.mixture
-    path = '/home/kevincheng/Documents/voiceprint-htn/audio/record2.wav'
-    sampling_rate, data = wav.read(path)
+    # path = '/home/kevincheng/Documents/voiceprint-htn/audio/record2.wav'
+    # sampling_rate, data = wav.read(path)
 
-    features = voice_auth.voice_features(sampling_rate, data)
-    print(features)
+    # features = voice_auth.voice_features(sampling_rate, data)
+    # print(features)
 
     # Number of samples per component
     n_samples = 500
@@ -128,6 +133,7 @@ def test3():
         -0.1 * np.random.randn(n_samples, 2) + np.array([2, 2]),
     ]
     print(X)
+    return
     # Fit a Gaussian mixture with EM using five components
     gmm = sklearn.mixture.GaussianMixture(n_components=10, covariance_type="full").fit(X)
 
@@ -139,8 +145,41 @@ def test3():
     print(y_)
 
 def test_noise_reduction():
-    voice_auth.test_noise_reduction('/home/kevincheng/Documents/voiceprint-htn/test_noise/input.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/test_noise/result.wav')
+    voice_auth.test_noise_reduction('/home/kevincheng/Documents/voiceprint-htn/audio/rtest2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/result2.wav')
+
+def test4():
+    kevin = ['/home/kevincheng/Documents/voiceprint-htn/audio/kevin1.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin3.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin4.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin5.wav']
+    thomas = ['/home/kevincheng/Documents/voiceprint-htn/audio/thomas1.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas3.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas4.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas5.wav']
+    raymond = ['/home/kevincheng/Documents/voiceprint-htn/audio/raymond1.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond3.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond4.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond5.wav']
+    test = ['/home/kevincheng/Documents/voiceprint-htn/audio/rtest1.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest2.wav',
+        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest3.wav'
+    ]
+
+    success = voice_auth.build_model("kevin", kevin)
+    # success = voice_auth.build_model("thomas", thomas)
+    # success = voice_auth.build_model("raymond", raymond)
+
+    path = '/home/kevincheng/Documents/voiceprint-htn/audio/sample.wav'
+    voice_record.record(path)
+
+    model, prob = voice_auth.compare(path, THRESHOLD, '/home/kevincheng/Documents/voiceprint-htn/audio_models/')
+
+    print(print(model, prob))
+
 
 if __name__ == '__main__':
-    test1()
+    test4()
