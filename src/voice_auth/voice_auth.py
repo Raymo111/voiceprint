@@ -8,10 +8,12 @@ import scipy.io.wavfile as wav
 import sklearn.mixture
 import noisereduce
 from pydub import AudioSegment
-import voice_record
+from . import voice_record
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
-
+THRESHOLD = -16.2
+HOME = os.environ.get("HOME")
+SECONDS = 5
 
 def test_noise_reduction(path, path2):
     print(path)
@@ -56,10 +58,10 @@ def voice_features(rate, data):
 def build_model(name, paths):
     """ Builds Gaussian Mixture Model from features of each WAV file in paths collection
     Parameters:
-    name: str               - name of model (id)
+    name: str               - name of model ($USER)
     paths: list[str]        - list of paths of WAV files. WAV files MUST BE MONO NOT STERO
     """
-    dest = '/home/kevincheng/Documents/voiceprint-htn/audio_models/'
+    dest = f'{HOME}/Documents/voiceprint-htn/audio_models/'
     combined_features = np.asarray([])
 
     for path in paths:
@@ -82,13 +84,13 @@ def build_model(name, paths):
         return False
 
 
-def compare(path, threshold, models_src):
+def compare(path):
     """ Compares audio features against all models to find closest match above given threshold
     Parameters:
     paths: str              - path of WAV file to compare
     threshold: num          - threshold for match, negative log likelihood
     """
-
+    models_src = f'{HOME}/Documents/voiceprint-htn/audio_models/'
     model_paths = [os.path.join(models_src, fname) for fname in
         os.listdir(models_src) if fname.endswith('.gmm')]
 
@@ -113,12 +115,20 @@ def compare(path, threshold, models_src):
         debug_every_model.append((model_name, ll))
 
     logging.debug(debug_every_model)
-    if best_probabilty > threshold:
+    if best_probabilty > THRESHOLD:
         return best_model, best_probabilty
     else:
         return None, None
 
 def authenticate():
-    voice_record.record()
-    # compare()
-    return False
+    path = f'{HOME}/Documents/voiceprint-htn/audio/compare.wav'
+    model, prob = compare(voice_record.record(path, SECONDS))
+    print(model, prob)
+
+    if model != os.environ.get('USER'):
+        return False
+    if prob > THRESHOLD:
+        return True
+    else:
+        return False
+

@@ -5,76 +5,84 @@ import matplotlib as mpl
 import numpy as np
 from scipy import linalg
 from tqdm import tqdm
-from voice_auth import voice_auth
+from voice_auth import voice_auth, voice_record
 from pydub import AudioSegment
-from record import voice_record
 
-THRESHOLD = -16.2
-
+HOME = os.environ.get("HOME")
 color_iter = itertools.cycle(["navy", "c", "cornflowerblue", "gold", "darkorange"])
 
-def test1():
-    kevin = ['/home/kevincheng/Documents/voiceprint-htn/audio/kevin1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin3.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin4.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin5.wav']
-    thomas = ['/home/kevincheng/Documents/voiceprint-htn/audio/thomas1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas3.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas4.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas5.wav']
-    raymond = ['/home/kevincheng/Documents/voiceprint-htn/audio/raymond1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond3.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond4.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond5.wav']
-    test = ['/home/kevincheng/Documents/voiceprint-htn/audio/rtest1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest3.wav'
+def train():
+    kevin = [
+        f'{HOME}/Documents/voiceprint-htn/audio/kevin1.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/kevin2.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/kevin3.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/kevin4.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/kevin5.wav'
     ]
 
-    # success = voice_auth.build_model("kevin", kevin)
+    thomas = [
+        f'{HOME}/Documents/voiceprint-htn/audio/thomas1.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/thomas2.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/thomas3.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/thomas4.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/thomas5.wav'
+    ]
+    raymond = [
+        # f'{HOME}/Documents/voiceprint-htn/audio/raymond1.wav',
+        # f'{HOME}/Documents/voiceprint-htn/audio/raymond2.wav',
+        # f'{HOME}/Documents/voiceprint-htn/audio/raymond3.wav',
+        # f'{HOME}/Documents/voiceprint-htn/audio/raymond4.wav',
+        # f'{HOME}/Documents/voiceprint-htn/audio/raymond5.wav'
+        f'{HOME}/Documents/voiceprint-htn/audio/raymond6.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/raymond7.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/raymond8.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/raymond9.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/raymond10.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/raymond11.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/raymond12.wav'
+    ]
+
+    success = voice_auth.build_model("kevin", kevin)
     # success = voice_auth.build_model("thomas", thomas)
-    success = voice_auth.build_model("raymond", raymond)
+    # success = voice_auth.build_model("raymond", raymond)
 
-    lst = []
-    for path in test:
-        model, prob = voice_auth.compare(path, THRESHOLD, '/home/kevincheng/Documents/voiceprint-htn/audio_models/')
-        lst.append((model, prob))
+    # lst = []
+    # for path in kevin:
+    #     model, prob = voice_auth.compare(path)
+    #     lst.append((model, prob))
 
-    print(lst)
-
-
-# 102 correct out of 104 (52 male, 52 female), -18.98 avg
-def test2():
-    voices_male_src = '/home/kevincheng/Documents/sample_voice_data/males'
-    voices_female_src = '/home/kevincheng/Documents/sample_voice_data/females'
-
-    for voice in os.listdir(voices_male_src):
-        path = os.path.join(voices_male_src, voice)
-        success = voice_auth.build_model(voice, [path])
-
-    for voice in os.listdir(voices_female_src):
-        path = os.path.join(voices_female_src, voice)
-        success = voice_auth.build_model(voice, [path])
-
-    lst = []
-    voices_male_src = '/home/kevincheng/Documents/sample_voice_data/males'
-    voices_female_src = '/home/kevincheng/Documents/sample_voice_data/females'
-
-    for voice in tqdm(os.listdir(voices_male_src)):
-        path = os.path.join(voices_male_src, voice)
-        model, prob = voice_auth.compare(path, THRESHOLD, '/home/kevincheng/Documents/voiceprint-htn/audio_models_celeb/')
-        lst.append((model == voice.split('.wav')[0], prob))
+    # print(lst)
 
 
-    for voice in tqdm(os.listdir(voices_female_src)):
-        path = os.path.join(voices_female_src, voice)
-        model, prob = voice_auth.compare(path, THRESHOLD, '/home/kevincheng/Documents/voiceprint-htn/audio_models_celeb/')
-        lst.append((model == voice.split('.wav')[0], prob))
+# # 102 correct out of 104 (52 male, 52 female), -18.98 avg
+# def test2():
+#     voices_male_src = f'{HOME}/Documents/sample_voice_data/males'
+#     voices_female_src = f'{HOME}/Documents/sample_voice_data/females'
 
-    print(len([1 for t, n in lst if t == True]))
+#     for voice in os.listdir(voices_male_src):
+#         path = os.path.join(voices_male_src, voice)
+#         success = voice_auth.build_model(voice, [path])
+
+#     for voice in os.listdir(voices_female_src):
+#         path = os.path.join(voices_female_src, voice)
+#         success = voice_auth.build_model(voice, [path])
+
+#     lst = []
+#     voices_male_src = f'{HOME}/Documents/sample_voice_data/males'
+#     voices_female_src = f'{HOME}/Documents/sample_voice_data/females'
+
+#     for voice in tqdm(os.listdir(voices_male_src)):
+#         path = os.path.join(voices_male_src, voice)
+#         model, prob = voice_auth.compare(path, THRESHOLD, f'{HOME}/Documents/voiceprint-htn/audio_models_celeb/')
+#         lst.append((model == voice.split('.wav')[0], prob))
+
+
+#     for voice in tqdm(os.listdir(voices_female_src)):
+#         path = os.path.join(voices_female_src, voice)
+#         model, prob = voice_auth.compare(path, THRESHOLD, f'{HOME}/Documents/voiceprint-htn/audio_models_celeb/')
+#         lst.append((model == voice.split('.wav')[0], prob))
+
+#     print(len([1 for t, n in lst if t == True]))
 
 
 
@@ -113,7 +121,7 @@ def plot_results(X, Y_, means, covariances, index, title):
 def test3():
     import scipy.io.wavfile as wav
     import sklearn.mixture
-    # path = '/home/kevincheng/Documents/voiceprint-htn/audio/record2.wav'
+    # path = f'{HOME}/Documents/voiceprint-htn/audio/record2.wav'
     # sampling_rate, data = wav.read(path)
 
     # features = voice_auth.voice_features(sampling_rate, data)
@@ -145,41 +153,14 @@ def test3():
     print(y_)
 
 def test_noise_reduction():
-    voice_auth.test_noise_reduction('/home/kevincheng/Documents/voiceprint-htn/audio/rtest2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/result2.wav')
+    voice_auth.test_noise_reduction(f'{HOME}/Documents/voiceprint-htn/audio/rtest2.wav',
+        f'{HOME}/Documents/voiceprint-htn/audio/result2.wav')
 
 def test4():
-    kevin = ['/home/kevincheng/Documents/voiceprint-htn/audio/kevin1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin3.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin4.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/kevin5.wav']
-    thomas = ['/home/kevincheng/Documents/voiceprint-htn/audio/thomas1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas3.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas4.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/thomas5.wav']
-    raymond = ['/home/kevincheng/Documents/voiceprint-htn/audio/raymond1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond3.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond4.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/raymond5.wav']
-    test = ['/home/kevincheng/Documents/voiceprint-htn/audio/rtest1.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest2.wav',
-        '/home/kevincheng/Documents/voiceprint-htn/audio/rtest3.wav'
-    ]
-
-    success = voice_auth.build_model("kevin", kevin)
-    # success = voice_auth.build_model("thomas", thomas)
-    # success = voice_auth.build_model("raymond", raymond)
-
-    path = '/home/kevincheng/Documents/voiceprint-htn/audio/sample.wav'
-    voice_record.record(path)
-
-    model, prob = voice_auth.compare(path, THRESHOLD, '/home/kevincheng/Documents/voiceprint-htn/audio_models/')
-
-    print(print(model, prob))
+    ret = voice_auth.authenticate()
+    print(ret)
 
 
 if __name__ == '__main__':
-    pass
+    # train()
+    test4()
