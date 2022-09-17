@@ -19,7 +19,9 @@ numpy==1.23.3
 packaging==21.3
 Pillow==9.2.0
 pooch==1.6.0
+PyAudio==0.2.12
 pycparser==2.21
+pydub==0.25.1
 pyparsing==3.0.9
 python-dateutil==2.8.2
 python-speech-features==0.6
