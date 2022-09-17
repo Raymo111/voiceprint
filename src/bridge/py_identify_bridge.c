@@ -28,14 +28,14 @@ int do_identify()
 
 	if (p_module == NULL)
 	{
-		printf("Error: cannot import module 'authenticate'!");
+		printf("Error importing module 'voice_auth'!");
 		return ERROR;
 	}
 	p_result = PyObject_CallMethod(p_module, "authenticate", NULL);
 	Py_DECREF(p_module);
 	if (p_result == NULL)
 	{
-		printf("Error: cannot call method 'authenticate'!");
+		printf("Error calling method 'authenticate'!");
 		return ERROR;
 	}
 	if (PyBool_Check(p_result))
