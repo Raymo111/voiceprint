@@ -52,8 +52,9 @@ def build_model(name, paths):
         logging.info(f"Combined feature size: {combined_features.size}")
 
     if combined_features.size != 0:
+        logging.debug(f"n components: {len(paths)}")
         gmm = sklearn.mixture.GaussianMixture(
-            n_components=len(paths)+1, max_iter=200, covariance_type='diag', n_init=3)
+            n_components=len(paths), max_iter=200, covariance_type='diag', n_init=3)
         gmm.fit(features)
         pickle.dump(gmm, open(dest + name + '.gmm', 'wb'))
         return True
@@ -66,7 +67,6 @@ def compare(path):
     models_src = '/home/kevincheng/Documents/voiceprint-htn/audio_models/'
     model_paths = [os.path.join(models_src, fname) for fname in
         os.listdir(models_src) if fname.endswith('.gmm')]
-    models = [pickle.load(open(path, 'rb')) for path in model_paths]
 
     sampling_rate, data = wav.read(path)
 
