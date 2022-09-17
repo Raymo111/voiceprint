@@ -1,10 +1,11 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <stdbool.h>
+#include "py_identify_bridge.h"
 
 const int ERROR = 2;
 
-int do_identify()
+int identify()
 {
 	bool result;
 	Py_Initialize();
@@ -59,10 +60,4 @@ int do_identify()
 	}
 	Py_DECREF(p_result);
 	return result;
-}
-
-int main(int argc, char const *argv[])
-{
-	do_identify();
-	return 0;
 }

@@ -1,0 +1,6 @@
+{
+	"files.associations": {
+		"py_identify_bridge.h": "c",
+		"stdbool.h": "c"
+	}
+}
