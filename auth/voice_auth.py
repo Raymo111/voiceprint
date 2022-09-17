@@ -49,7 +49,7 @@ def build_model(name, paths):
             combined_features = features
         else:
             combined_features = np.vstack([combined_features, features])
-        logging.info(f"Combined feature size: {combined_features.size}")
+        logging.debug(f"Combined feature size: {combined_features.size}")
 
     if combined_features.size != 0:
         logging.debug(f"n components: {len(paths)}")
@@ -64,6 +64,10 @@ def build_model(name, paths):
 
 
 def compare(path):
+    """ Compares audio features against all GMMs to find closest match
+    Parameters:
+    paths: str              - path of WAV file to compare
+    """
     models_src = '/home/kevincheng/Documents/voiceprint-htn/audio_models/'
     model_paths = [os.path.join(models_src, fname) for fname in
         os.listdir(models_src) if fname.endswith('.gmm')]

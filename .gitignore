@@ -1,6 +1,7 @@
 # Project-specific
 audio/
 audio_models/
+audio_models_celeb/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
