@@ -11,7 +11,7 @@ int identify()
 	Py_Initialize();
 	PyObject *sysPath = PySys_GetObject("path");
 	assert(sysPath != NULL);
-    PyObject *path = PyUnicode_DecodeFSDefault("../voice_auth");
+    PyObject *path = PyUnicode_DecodeFSDefault("/home/raymo/Git/voiceprint-htn/src/voice_auth");
 	assert(path != NULL);
 	PyList_Insert(sysPath, 0, path);
 
