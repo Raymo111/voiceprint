@@ -8,6 +8,8 @@
 #include <security/pam_modules.h>
 #include <security/pam_ext.h>
 
+const int MAX_ATTEMPTS = 3;
+
 static int send_info_msg(pam_handle_t *pamh, char *msg)
 {
 	const struct pam_message mymsg = {
@@ -77,11 +79,13 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 
 	homedir = strdup(passwd->pw_dir);
 
-	int status = system("python3 /home/raymo/Git/voiceprint-htn/src/cli.py -a");
-	printf("status: %d", status);
-    if (status == 256) {
-        return PAM_SUCCESS;
-    }
+	for (int i = 0; i < MAX_ATTEMPTS; ++i) {
+		int status = system("python3 /home/raymo/Git/voiceprint-htn/src/cli.py -a");
+		printf("status: %d", status);
+		if (status == 256) {
+			return PAM_SUCCESS;
+		}
+	}
     return PAM_AUTH_ERR;
 }
 
