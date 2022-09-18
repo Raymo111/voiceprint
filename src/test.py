@@ -164,3 +164,4 @@ def test4():
 if __name__ == '__main__':
     # train()
     test4()
+    # print(os.path.dirname(__file__))

@@ -12,8 +12,8 @@ from . import voice_record
 
 logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
 THRESHOLD = -16.2
-HOME = os.environ.get("HOME")
 SECONDS = 5
+BASEPATH = os.path.dirname(__file__)
 
 def test_noise_reduction(path, path2):
     print(path)
@@ -61,9 +61,10 @@ def build_model(name, paths):
     name: str               - name of model ($USER)
     paths: list[str]        - list of paths of WAV files. WAV files MUST BE MONO NOT STERO
     """
-    dest = f'{HOME}/Documents/voiceprint-htn/audio_models/'
+    print(name, paths)
+    dest = os.path.join(BASEPATH, '../../audio_models')
     combined_features = np.asarray([])
-
+    print(dest)
     for path in paths:
         sampling_rate, data = wav.read(path)
         features = voice_features(sampling_rate, data)
@@ -77,7 +78,7 @@ def build_model(name, paths):
         gmm = sklearn.mixture.GaussianMixture(
             n_components=len(paths), max_iter=200, covariance_type='diag', n_init=3)
         gmm.fit(features)
-        pickle.dump(gmm, open(dest + name + '.gmm', 'wb'))
+        pickle.dump(gmm, open(os.path.join(dest, name + '.gmm'), 'wb'))
         return True
     else:
         logging.warning(" NO FEATURES")
@@ -90,7 +91,7 @@ def compare(path):
     paths: str              - path of WAV file to compare
     threshold: num          - threshold for match, negative log likelihood
     """
-    models_src = f'{HOME}/Documents/voiceprint-htn/audio_models/'
+    models_src = os.path.join(BASEPATH, '../../audio_models')
     model_paths = [os.path.join(models_src, fname) for fname in
         os.listdir(models_src) if fname.endswith('.gmm')]
 
@@ -121,7 +122,7 @@ def compare(path):
         return None, None
 
 def authenticate():
-    path = f'{HOME}/Documents/voiceprint-htn/audio/compare.wav'
+    path = os.path.join(BASEPATH, '../../audio/compare.wav')
     model, prob = compare(voice_record.record(path, SECONDS))
     print(model, prob)
 

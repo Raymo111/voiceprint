@@ -21,9 +21,8 @@ def record(path, seconds):
 
     frames = []  # Initialize array to store frames
 
-    # Store data in chunks for 3 seconds
+    # Store data in chunks
     for i in range(0, int(RATE / CHUNK * seconds)):
-        print(i)
         data = stream.read(CHUNK, exception_on_overflow=False)
         frames.append(data)
 
