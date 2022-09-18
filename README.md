@@ -11,4 +11,8 @@
 
 Voice biometric authentication PAM module for Linux
 
-Note: this project has not yet been created.
+# Usage
+1. Create two directories audio/ and audio_models/ in the parent directory
+1. Run `./voiceprint-setup.sh` and `./install.sh`
+1. Put `auth sufficient pam_voiceprint.so` in any pam files you want in `/etc/pam.d/` (i.e. `/etc/pam.d/sudo`)
+1. Try it with `sudo -l` :)
