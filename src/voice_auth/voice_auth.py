@@ -10,9 +10,7 @@ import noisereduce
 from pydub import AudioSegment
 from . import voice_record
 
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.DEBUG)
-THRESHOLD = -16.2
-SECONDS = 5
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 BASEPATH = os.path.dirname(__file__)
 
 def test_noise_reduction(path, path2):
@@ -116,7 +114,5 @@ def compare(path):
         debug_every_model.append((model_name, ll))
 
     logging.debug(debug_every_model)
-    if best_probabilty > THRESHOLD:
-        return best_model, best_probabilty
-    else:
-        return None, None
+    return best_model, best_probabilty
+
