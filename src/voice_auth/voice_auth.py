@@ -120,16 +120,3 @@ def compare(path):
         return best_model, best_probabilty
     else:
         return None, None
-
-def authenticate():
-    path = os.path.join(BASEPATH, '../../audio/compare.wav')
-    model, prob = compare(voice_record.record(path, SECONDS))
-    print(model, prob)
-
-    if model != os.environ.get('USER'):
-        return False
-    if prob > THRESHOLD:
-        return True
-    else:
-        return False
-

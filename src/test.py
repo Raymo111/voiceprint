@@ -5,8 +5,10 @@ import matplotlib as mpl
 import numpy as np
 from scipy import linalg
 from tqdm import tqdm
-from voice_auth import voice_auth, voice_record
+from voice_auth import voice_auth
 from pydub import AudioSegment
+
+from voice_auth.voice_record import voice_record
 
 HOME = os.environ.get("HOME")
 color_iter = itertools.cycle(["navy", "c", "cornflowerblue", "gold", "darkorange"])

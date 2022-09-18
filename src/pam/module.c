@@ -7,7 +7,6 @@
 #include <stdbool.h>
 #include <security/pam_modules.h>
 #include <security/pam_ext.h>
-#include "../bridge/py_identify_bridge.h"
 
 static int send_info_msg(pam_handle_t *pamh, char *msg)
 {
@@ -51,16 +50,6 @@ static int send_err_msg(pam_handle_t *pamh, char *msg)
 	return pc->conv(1, &msgp, &resp, pc->appdata_ptr);
 }
 
-static bool do_identify(pam_handle_t *pamh)
-{
-	return identify();
-}
-
-static int do_auth(pam_handle_t *pamh)
-{
-	return do_identify(pamh) ? PAM_SUCCESS : PAM_AUTH_ERR;
-}
-
 PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 	const char **argv)
 {
@@ -100,9 +89,12 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 		return PAM_AUTHINFO_UNAVAIL;
 	}
 
-	r = do_auth(pamh);
-	free(homedir);
-	return r;
+	int status = system("python3 /home/raymo/Git/voiceprint-htn/src/cli.py -a");
+    if (status == 1) {
+        return PAM_SUCCESS;
+    }
+    free(homedir);
+    return PAM_AUTH_ERR;
 }
 
 PAM_EXTERN int pam_sm_setcred(pam_handle_t *pamh, int flags, int argc,
