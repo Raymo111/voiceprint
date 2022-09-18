@@ -16,6 +16,8 @@ matplotlib==3.6.0
 noisereduce==2.0.1
 numba==0.56.2
 numpy==1.23.3
+pam==0.2.0
+python-pam==2.0.2
 packaging==21.3
 Pillow==9.2.0
 pooch==1.6.0
