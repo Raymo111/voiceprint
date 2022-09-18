@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import argparse
 import os
 import sys
@@ -34,10 +35,13 @@ def authenticate():
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('-a', '--auth', action='store_true', required=False)
+    parser.add_argument('-p', '--phrase', required=False)
     args = parser.parse_args()
+
     if not args.auth:
-        username = input('Please input your username: ')
         dest = os.path.join(BASEPATH, f'../audio')
+        phrase = args.phrase if args.phrase else phrase
+        username = input('Please input your username: ')
 
         paths_modelling = []
         print("Please say the phrase:", phrase)

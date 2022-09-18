@@ -12,3 +12,5 @@
 Voice biometric authentication PAM module for Linux
 
 Note: currently creating for Hack the North: https://github.com/Raymo111/voiceprint
+
+Create two directories audio/ and audio_models/ in the parent directory
