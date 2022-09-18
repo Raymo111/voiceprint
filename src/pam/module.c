@@ -77,23 +77,11 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 
 	homedir = strdup(passwd->pw_dir);
 
-	/* a bit of a hack to make libfprint use the right home dir */
-
-
-    /* Thomas note */
-    /* I guess they are looking for user fingerprint at this "home dir".*/
-    /* This can point to where our voice samples/ models are saved? */
-	r = setenv("HOME", homedir, 1);
-	if (r < 0) {
-		free(homedir);
-		return PAM_AUTHINFO_UNAVAIL;
-	}
-
 	int status = system("python3 /home/raymo/Git/voiceprint-htn/src/cli.py -a");
-    if (status == 1) {
+	printf("status: %d", status);
+    if (status == 256) {
         return PAM_SUCCESS;
     }
-    free(homedir);
     return PAM_AUTH_ERR;
 }
 
