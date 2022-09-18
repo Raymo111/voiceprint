@@ -8,6 +8,8 @@
 #include <security/pam_modules.h>
 #include <security/pam_ext.h>
 
+const int MAX_ATTEMPTS = 3;
+
 static int send_info_msg(pam_handle_t *pamh, char *msg)
 {
 	const struct pam_message mymsg = {
@@ -77,23 +79,13 @@ PAM_EXTERN int pam_sm_authenticate(pam_handle_t *pamh, int flags, int argc,
 
 	homedir = strdup(passwd->pw_dir);
 
-	/* a bit of a hack to make libfprint use the right home dir */
-
-
-    /* Thomas note */
-    /* I guess they are looking for user fingerprint at this "home dir".*/
-    /* This can point to where our voice samples/ models are saved? */
-	r = setenv("HOME", homedir, 1);
-	if (r < 0) {
-		free(homedir);
-		return PAM_AUTHINFO_UNAVAIL;
+	for (int i = 0; i < MAX_ATTEMPTS; ++i) {
+		int status = system("python3 /home/raymo/Git/voiceprint-htn/src/cli.py -a");
+		printf("status: %d", status);
+		if (status == 256) {
+			return PAM_SUCCESS;
+		}
 	}
-
-	int status = system("python3 /home/raymo/Git/voiceprint-htn/src/cli.py -a");
-    if (status == 1) {
-        return PAM_SUCCESS;
-    }
-    free(homedir);
     return PAM_AUTH_ERR;
 }
 
