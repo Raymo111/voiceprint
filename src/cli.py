@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import os
+import glob
 import sys
 from typing import Optional
 from voice_auth import voice_auth
@@ -39,6 +40,10 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if not args.auth:
+        files = glob.glob(os.path.join(BASEPATH, '../audio_models/*'))
+        for f in files:
+            os.remove(f)
+
         dest = os.path.join(BASEPATH, f'../audio')
         phrase = args.phrase if args.phrase else phrase
         username = input('Please input your username: ')
@@ -48,15 +53,15 @@ if __name__ == '__main__':
         for i in range(1, NUM_SAMPLE//2 + 1):
             promp = input('Press enter to record... ')
             path = os.path.join(dest, username + str(i) + '.wav')
-            voice_record.record(path, 5)
+            voice_record.record(path, SECONDS)
             paths_modelling.append(path)
 
         paths_training = []
         print("Please say the phrase:", phrase)
-        for i in range(3, int(NUM_SAMPLE) + 1):
+        for i in range(4, int(NUM_SAMPLE) + 1):
             promp = input('Press enter to record... ')
             path = os.path.join(dest, username + str(i) + '.wav')
-            voice_record.record(path, 5)
+            voice_record.record(path, SECONDS)
             paths_training.append(path)
 
         voice_auth.build_model(username, paths_modelling)

@@ -8,7 +8,6 @@ import scipy.io.wavfile as wav
 import sklearn.mixture
 import noisereduce
 from pydub import AudioSegment
-from . import voice_record
 
 BASEPATH = os.path.dirname(__file__)
 

@@ -6,5 +6,3 @@ then
 else
     ./src/cli.py -p "$1"
 fi
-
-./src/cli.py -a
