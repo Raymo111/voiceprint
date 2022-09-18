@@ -5,7 +5,7 @@ from typing import Optional
 from voice_auth import voice_auth
 from voice_auth import voice_record
 
-THRESHOLD = -300
+THRESHOLD = -17.0
 SECONDS = 5
 BASEPATH = os.path.dirname(__file__)
 NUM_SAMPLE = 5
@@ -17,9 +17,9 @@ def authenticate():
     model, prob = voice_auth.compare(voice_record.record(path, SECONDS))
     print(model, prob)
 
-    if model != os.environ.get('USER'):
-        return False
-    if prob > THRESHOLD:
+    # if model != os.environ.get('USER'):
+    #     return False
+    if prob and prob > THRESHOLD:
         return True
     else:
         return False
