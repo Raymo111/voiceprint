@@ -4,6 +4,9 @@ import sys
 from typing import Optional
 from voice_auth import voice_auth
 from voice_auth import voice_record
+import logging
+
+logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 
 THRESHOLD = -300
 SECONDS = 4
@@ -19,10 +22,10 @@ def authenticate():
 
     path = os.path.join(BASEPATH, '../audio/compare.wav')
     model, prob = voice_auth.compare(voice_record.record(path, SECONDS))
-    print(model, prob)
+    logging.debug(f"{model}, {prob}")
 
     if prob and prob > THRESHOLD:
-        print('True')
+        print('Verified')
         return True
     else:
         return False
@@ -37,16 +40,16 @@ if __name__ == '__main__':
         dest = os.path.join(BASEPATH, f'../audio')
 
         paths_modelling = []
+        print("Please say the phrase:", phrase)
         for i in range(1, NUM_SAMPLE//2 + 1):
-            print("Please say the phrase:", phrase)
             promp = input('Press enter to record... ')
             path = os.path.join(dest, username + str(i) + '.wav')
             voice_record.record(path, 5)
             paths_modelling.append(path)
 
         paths_training = []
+        print("Please say the phrase:", phrase)
         for i in range(3, int(NUM_SAMPLE) + 1):
-            print("Please say the phrase:", phrase)
             promp = input('Press enter to record... ')
             path = os.path.join(dest, username + str(i) + '.wav')
             voice_record.record(path, 5)
@@ -60,7 +63,7 @@ if __name__ == '__main__':
             thresholds.append(prob)
 
         THRESHOLD = (sum(thresholds) / len(thresholds)) - 0.5
-        print(THRESHOLD)
+        logging.debug(THRESHOLD)
 
         f = open(os.path.join(BASEPATH, 'threshold.txt'), 'w')
         f.write(str(THRESHOLD))

@@ -10,11 +10,10 @@ import noisereduce
 from pydub import AudioSegment
 from . import voice_record
 
-logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 BASEPATH = os.path.dirname(__file__)
 
 def test_noise_reduction(path, path2):
-    print(path)
+    logging.debug(path)
     rate, data = wav.read(path)
     # convert stereo to mono if applicable
 
@@ -59,10 +58,9 @@ def build_model(name, paths):
     name: str               - name of model ($USER)
     paths: list[str]        - list of paths of WAV files. WAV files MUST BE MONO NOT STERO
     """
-    print(name, paths)
     dest = os.path.join(BASEPATH, '../../audio_models')
     combined_features = np.asarray([])
-    print(dest)
+    logging.debug(dest)
     for path in paths:
         sampling_rate, data = wav.read(path)
         features = voice_features(sampling_rate, data)
